@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Pomodoro Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="img/pomodoro-editor-mini-icon.png" />
+  </head>
+
+  <style>
+    .container {
+      display: flex;
+    }
+
+    .bar {
+      background: rgb(13, 13, 13);
+      height: 100px;
+      border-radius: 10px;
+      margin: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+  </style>
+
+  <body>
+    <div class="container bar">
+      <div style="width: 20%">
+        <img src="img/pomodoro-editor-icon.svg" height="90%" />
+      </div>
+      <div style="width: 20%; text-align: right">
+        <img
+          style="cursor: pointer"
+          src="img/play-button.svg"
+          height="90%"
+        />
+      </div>
+      <div style="width: 60%; text-align: right">
+        <p
+          style="
+            margin: 10px;
+            font-weight: bold;
+            font-size: 30px;
+            color: rgb(146, 0, 0);
+            font-family: 'Century Gothic', Verdana, sans-serif;
+          "
+        >
+          Pomodoro Editor
+        </p>
+        <img
+          style="margin: auto 10px auto 10px"
+          src="img/red-github-icon.svg"
+          height="32px"
+        />
+      </div>
+    </div>
+    <div class="container">
+      <div style="height: 800px; width: 40%" id="editor"></div>
+      <div style="height: 800px; width: 60%" id="pomodoro-canvas">pomodoro</div>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
