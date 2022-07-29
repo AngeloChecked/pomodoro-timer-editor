@@ -4,7 +4,9 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build:production": "webpack --mode=production",
+    "build:dev": "webpack --mode=development"
   },
   "author": "",
   "license": "ISC",
