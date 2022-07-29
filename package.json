@@ -4,25 +4,35 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": ""
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "monaco-editor": "^0.33.0"
+    "monaco-editor": "^0.33.0",
+    "oxide.ts": "^1.0.0",
+    "yaml": "^2.1.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.1",
+    "@types/jest": "^28.1.6",
+    "@types/mocha": "^9.1.1",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
+    "chai": "^4.3.6",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.1",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "html-webpack-plugin": "^5.5.0",
+    "jest": "^28.0.3",
+    "mocha": "^10.0.0",
     "monaco-editor-webpack-plugin": "^7.0.1",
     "style-loader": "^3.3.1",
+    "ts-jest": "^28.0.7",
     "ts-loader": "^9.3.1",
+    "ts-node": "^10.9.1",
     "typescript": "^4.7.4",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
