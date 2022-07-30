@@ -56,35 +56,20 @@ export default class PomodoroTimerEditorValidator {
     return rootTokenLines
   }
 
-  validate(template: string): Result<'ok', PomodoroTimerEditorError> {
-    const tokens = Array.from(new YAML.Parser().parse(template)) as CustomYAMLParserToken[]
-
-    const newlines = this.traverseLines(tokens)
+  private traverseAndValidateKeys(
+    tokens: CustomYAMLParserToken[],
+    fn: (keyName: string, start: number, end: number, value: string) => Result<'ok', PomodoroTimerEditorError>
+  ): Result<'ok', PomodoroTimerEditorError> {
     for (const token of tokens) {
       const traverse = (token: CustomYAMLParserToken): Result<'ok', PomodoroTimerEditorError> => {
-        if (token?.key?.source === 'timeSpent') {
-          const timeSpentValueStartOffset = token?.value?.offset
-          const timeSpentValueEndOffset = token?.value?.end?.[0].offset
-          const timeSpentIsInSeconds = token.value?.source?.match(/^\d+s$/) !== null
-          if (timeSpentValueStartOffset && timeSpentValueEndOffset && !timeSpentIsInSeconds) {
-            return Err({
-              code: 'BAD_TIME_SPENT_FORMAT',
-              pos: [timeSpentValueStartOffset, timeSpentValueEndOffset],
-              linePos: this.findColumns(timeSpentValueStartOffset, timeSpentValueEndOffset, newlines),
-            })
-          }
-        }
-
-        if (token?.key?.source === 'timer') {
-          const timerValueStartOffset = token?.value?.offset
-          const timerValueEndOffset = token?.value?.end?.[0].offset
-          const timerIsInMinutes = token.value?.source?.match(/^\d+m$/) !== null
-          if (timerValueStartOffset && timerValueEndOffset && !timerIsInMinutes) {
-            return Err({
-              code: 'BAD_TIMER_FORMAT',
-              pos: [timerValueStartOffset, timerValueEndOffset],
-              linePos: this.findColumns(timerValueStartOffset, timerValueEndOffset, newlines),
-            })
+        if (token?.key?.source) {
+          const startOffset = token?.value?.offset
+          const endOffset = token?.value?.end?.[0].offset
+          if (startOffset && endOffset && token.value?.source) {
+            const fnResult = fn(token.key.source, startOffset, endOffset, token.value.source)
+            if (fnResult.isErr()) {
+              return fnResult
+            }
           }
         }
 
@@ -113,5 +98,38 @@ export default class PomodoroTimerEditorValidator {
       }
     }
     return Ok('ok')
+  }
+
+  validate(template: string): Result<'ok', PomodoroTimerEditorError> {
+    const tokens = Array.from(new YAML.Parser().parse(template)) as CustomYAMLParserToken[]
+
+    const newlines = this.traverseLines(tokens)
+    return this.traverseAndValidateKeys(
+      tokens,
+      (keyName: string, start: number, end: number, value: string): Result<'ok', PomodoroTimerEditorError> => {
+        if (keyName === 'timeSpent') {
+          const timeSpentIsInSeconds = value.match(/^\d+s$/) !== null
+          if (!timeSpentIsInSeconds) {
+            return Err({
+              code: 'BAD_TIME_SPENT_FORMAT',
+              pos: [start, end],
+              linePos: this.findColumns(start, end, newlines),
+            })
+          }
+        }
+
+        if (keyName === 'timer') {
+          const timerIsInMinutes = value.match(/^\d+m$/) !== null
+          if (!timerIsInMinutes) {
+            return Err({
+              code: 'BAD_TIMER_FORMAT',
+              pos: [start, end],
+              linePos: this.findColumns(start, end, newlines),
+            })
+          }
+        }
+        return Ok('ok')
+      }
+    )
   }
 }
