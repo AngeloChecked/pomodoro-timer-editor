@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import PomodoroTimerEditorValidator from '../src/PomodoroTimerEditorValidator'
 
 describe('PomodoroTimerEditorValidator', () => {
-  it('timer property is in minutes', () => {
+  it('timer property should be expressed in seconds', () => {
     const pomodoroTimerEditor = new PomodoroTimerEditorValidator()
 
     const isValid = pomodoroTimerEditor.validate(`- pomodoro: 
@@ -53,6 +53,45 @@ describe('PomodoroTimerEditorValidator', () => {
         { line: 4, col: 14 },
         { line: 4, col: 15 },
         { line: 4, col: 16 },
+      ],
+    })
+  })
+
+  it('timerSpent property should be expressed in seconds', () => {
+    const pomodoroTimerEditor = new PomodoroTimerEditorValidator()
+
+    const isValid = pomodoroTimerEditor.validate(`
+- pomodoro:
+    taskName: calendar
+    timer: 25m
+    timeSpent: 120s
+`)
+
+    expect(isValid.isOk()).equal(true)
+  })
+
+  it('result the first timerSpent error found', () => {
+    const pomodoroTimerEditor = new PomodoroTimerEditorValidator()
+
+    const isValid = pomodoroTimerEditor.validate(`
+- pomodoro:
+    taskName: calendar
+    timer: 25m
+    timeSpent: 120aaaa
+`)
+
+    expect(isValid.isErr()).equal(true)
+    expect(isValid.unwrapErr()).deep.eq({
+      code: 'BAD_TIME_SPENT_FORMAT',
+      pos: [66, 73],
+      linePos: [
+        { line: 5, col: 17 },
+        { line: 5, col: 18 },
+        { line: 5, col: 19 },
+        { line: 5, col: 20 },
+        { line: 5, col: 21 },
+        { line: 5, col: 22 },
+        { line: 5, col: 23 },
       ],
     })
   })

@@ -60,9 +60,21 @@ export default class PomodoroTimerEditorValidator {
     const tokens = Array.from(new YAML.Parser().parse(template)) as CustomYAMLParserToken[]
 
     const newlines = this.traverseLines(tokens)
-
     for (const token of tokens) {
       const traverse = (token: CustomYAMLParserToken): Result<'ok', PomodoroTimerEditorError> => {
+        if (token?.key?.source === 'timeSpent') {
+          const timeSpentValueStartOffset = token?.value?.offset
+          const timeSpentValueEndOffset = token?.value?.end?.[0].offset
+          const timeSpentIsInSeconds = token.value?.source?.match(/^\d+s$/) !== null
+          if (timeSpentValueStartOffset && timeSpentValueEndOffset && !timeSpentIsInSeconds) {
+            return Err({
+              code: 'BAD_TIME_SPENT_FORMAT',
+              pos: [timeSpentValueStartOffset, timeSpentValueEndOffset],
+              linePos: this.findColumns(timeSpentValueStartOffset, timeSpentValueEndOffset, newlines),
+            })
+          }
+        }
+
         if (token?.key?.source === 'timer') {
           const timerValueStartOffset = token?.value?.offset
           const timerValueEndOffset = token?.value?.end?.[0].offset
