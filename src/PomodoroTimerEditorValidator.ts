@@ -13,6 +13,7 @@ type CustomYAMLParserToken = {
   sep?: CustomYAMLParserToken[]
   items?: CustomYAMLParserToken[]
   value?: CustomYAMLParserToken
+  done?: boolean
 }
 
 export default class PomodoroTimerEditorValidator {
@@ -21,7 +22,6 @@ export default class PomodoroTimerEditorValidator {
     endOffset: number,
     newlineOffsets: number[]
   ): { line: number; col: number }[] {
-    console.log(newlineOffsets)
     const lineOffsetIndex = newlineOffsets.findIndex((line) => line > startOffset)
     const previousLineOffset = newlineOffsets?.[lineOffsetIndex - 1] ?? 0
     const line = lineOffsetIndex + 1
@@ -33,62 +33,73 @@ export default class PomodoroTimerEditorValidator {
     return linesAndColumns
   }
 
-  private traverseLines(token: CustomYAMLParserToken): number[] {
-    const newlineToken = token?.end?.find((t) => t.type === 'newline') ?? token?.sep?.find((t) => t.type === 'newline')
+  private traverseLines(tokens: CustomYAMLParserToken[]): number[] {
+    let rootTokenLines: number[] = []
+    for (const token of tokens) {
+      const newlineToken =
+        token?.end?.find((t) => t.type === 'newline') ??
+        token?.sep?.find((t) => t.type === 'newline') ??
+        (token?.type === 'newline' ? token : null)
 
-    let lines: number[] = []
-    if (token.value) {
-      lines = this.traverseLines(token.value)
-    }
-    let flatLines: number[] = []
-    if (token.items) {
-      flatLines = token.items.map((token) => this.traverseLines(token)).flat()
-    }
+      let lines: number[] = []
+      if (token.value) {
+        lines = this.traverseLines([token.value])
+      }
+      let flatLines: number[] = []
+      if (token.items) {
+        flatLines = this.traverseLines(token.items)
+      }
 
-    return (newlineToken ? [newlineToken.offset] : []).concat(lines, flatLines)
+      const actualNewLine = newlineToken ? [newlineToken.offset] : []
+      rootTokenLines = rootTokenLines.concat(actualNewLine, lines, flatLines)
+    }
+    return rootTokenLines
   }
 
   validate(template: string): Result<'ok', PomodoroTimerEditorError> {
-    const tokens = new YAML.Parser().parse(template)
-    const token = tokens.next() as CustomYAMLParserToken
+    const tokens = Array.from(new YAML.Parser().parse(template)) as CustomYAMLParserToken[]
 
-    const newlines = this.traverseLines(token)
+    const newlines = this.traverseLines(tokens)
 
-    console.log('lines ------> ' + newlines)
-    const traverse = (token: CustomYAMLParserToken): Result<'ok', PomodoroTimerEditorError> => {
-      if (token?.key?.source === 'timer') {
-        const timerValueStartOffset = token?.value?.offset
-        const timerValueEndOffset = token?.value?.end?.[0].offset
-        console.log('------ \n\n', JSON.stringify(token))
-        console.log('------ \n\n')
-        if (timerValueStartOffset && timerValueEndOffset) {
-          return Err({
-            code: 'BAD_TIMER_FORMAT',
-            pos: [timerValueStartOffset, timerValueEndOffset],
-            linePos: this.findColumns(timerValueStartOffset, timerValueEndOffset, newlines),
-          })
+    for (const token of tokens) {
+      const traverse = (token: CustomYAMLParserToken): Result<'ok', PomodoroTimerEditorError> => {
+        if (token?.key?.source === 'timer') {
+          const timerValueStartOffset = token?.value?.offset
+          const timerValueEndOffset = token?.value?.end?.[0].offset
+          const timerIsInMinutes = token.value?.source?.match(/^\d+m$/) !== null
+          if (timerValueStartOffset && timerValueEndOffset && !timerIsInMinutes) {
+            return Err({
+              code: 'BAD_TIMER_FORMAT',
+              pos: [timerValueStartOffset, timerValueEndOffset],
+              linePos: this.findColumns(timerValueStartOffset, timerValueEndOffset, newlines),
+            })
+          }
         }
-      }
 
-      const items = token?.items
-      if (items) {
-        for (const item of items) {
-          const result = traverse(item)
+        const items = token?.items
+        if (items) {
+          for (const item of items) {
+            const result = traverse(item)
+            if (result.isErr()) {
+              return result
+            }
+          }
+        }
+        const value = token?.value
+        if (value) {
+          const result = traverse(value)
           if (result.isErr()) {
             return result
           }
         }
+        return Ok('ok')
       }
-      const value = token?.value
-      if (value) {
-        const result = traverse(value)
-        if (result.isErr()) {
-          return result
-        }
-      }
-      return Ok('ok')
-    }
 
-    return traverse(token)
+      const result = traverse(token)
+      if (result.isErr()) {
+        return result
+      }
+    }
+    return Ok('ok')
   }
 }

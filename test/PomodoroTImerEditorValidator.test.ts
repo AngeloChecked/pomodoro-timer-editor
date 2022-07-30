@@ -2,6 +2,16 @@ import { expect } from 'chai'
 import PomodoroTimerEditorValidator from '../src/PomodoroTimerEditorValidator'
 
 describe('PomodoroTimerEditorValidator', () => {
+  it('timer property is in minutes', () => {
+    const pomodoroTimerEditor = new PomodoroTimerEditorValidator()
+
+    const isValid = pomodoroTimerEditor.validate(`- pomodoro: 
+  timer: 12m
+`)
+
+    expect(isValid.isOk()).eq(true)
+  })
+
   it('result the first timer error found', () => {
     const pomodoroTimerEditor = new PomodoroTimerEditorValidator()
 
@@ -25,24 +35,24 @@ describe('PomodoroTimerEditorValidator', () => {
     })
   })
 
-  it.skip('result the first timer error found with another property', () => {
+  it('result the first timer error found with another property', () => {
     const pomodoroTimerEditor = new PomodoroTimerEditorValidator()
 
     const isValid = pomodoroTimerEditor.validate(`
 - pomodoro:
     taskName: calendar
-    time: 25aa
+    timer: 25aa
 `)
 
     expect(isValid.isErr()).equal(true)
     expect(isValid.unwrapErr()).deep.eq({
       code: 'BAD_TIMER_FORMAT',
-      pos: [45, 49],
+      pos: [47, 51],
       linePos: [
-        { line: 4, col: 10 },
-        { line: 4, col: 11 },
-        { line: 4, col: 12 },
         { line: 4, col: 13 },
+        { line: 4, col: 14 },
+        { line: 4, col: 15 },
+        { line: 4, col: 16 },
       ],
     })
   })
