@@ -1,15 +1,8 @@
-import * as monaco from 'monaco-editor'
+import configureAndCreateEditor from './monacoEditor'
 
-monaco.editor.create(document.getElementById('editor') as HTMLElement, {
-  value: ` 
-pomodoro:
-	taskName: calendar
-	time: 25m
-	timeSpent: 0s
-pause:
-	taskName: calendar
-	time: 25m
-	timeSpent: 0s
-`,
-  language: 'yaml',
+const monacoEditor = configureAndCreateEditor(document.getElementById('editor') as HTMLElement)
+
+const editorModel = monacoEditor.getModel()
+editorModel?.onDidChangeContent(() => {
+  // const _value = editorModel.getValue()
 })
