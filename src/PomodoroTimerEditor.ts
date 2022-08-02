@@ -104,4 +104,8 @@ export default class PomodoroTimerEditor {
     }
     return this.editorTemplates
   }
+
+  getYAMLTemplate(): string {
+    return YAML.stringify(this.editorTemplates)
+  }
 }

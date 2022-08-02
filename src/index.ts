@@ -16,7 +16,9 @@ function updatePomodoroCanvas(canvasTemplates: PomodoroTimerCanvasElementTemplat
     pomodoroCanvas.appendChild(element)
   })
 }
-const monacoEditor = configureAndCreateEditor(document.getElementById('editor') as HTMLElement)
+
+const monacoEditorBox = document.getElementById('editor') as HTMLDivElement
+const monacoEditor = configureAndCreateEditor(monacoEditorBox)
 const editorModel = monacoEditor.getModel()
 
 const pomodoroTimerEditor = new PomodoroTimerEditor()
@@ -40,6 +42,24 @@ editorModel?.onDidChangeContent(() => {
   }
 })
 
-// setInterval(() => {
-//   editorModel?.setValue()
-// }, 1000)
+let play = false
+const playButton = document.getElementById('play-button') as HTMLImageElement
+let timerLoop: NodeJS.Timeout
+
+playButton.onclick = () => {
+  if (play) {
+    monacoEditor.updateOptions({ readOnly: true, hideCursorInOverviewRuler: true })
+    playButton.src = 'img/stop-button.svg'
+    timerLoop = setInterval(() => {
+      pomodoroTimerEditor.updateTemplateToTheNextSecond()
+      const editorTemplateOneSecondNext = pomodoroTimerEditor.getYAMLTemplate()
+      editorModel?.setValue(editorTemplateOneSecondNext)
+    }, 1000)
+  } else {
+    const x = monacoEditorBox.querySelector('.cursors-layer.cursor') as HTMLElement
+    monacoEditor.updateOptions({ readOnly: false, hideCursorInOverviewRuler: false })
+    playButton.src = 'img/play-button.svg'
+    clearInterval(timerLoop)
+  }
+  play = !play
+}

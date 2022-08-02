@@ -109,4 +109,29 @@ describe('PomodoroTimerEditor', () => {
       { pause: { timer: '5m', timeSpent: '11s' } },
     ])
   })
+
+  it('produce internal template in yaml correctly', () => {
+    const pomodoroTimerEditor = new PomodoroTimerEditor()
+
+    pomodoroTimerEditor.setAndValidateEditorTemplate(`
+- pomodoro:
+    taskName: calendar
+    timer: 25m
+    timeSpent: 1500s 
+- pause:
+    timer: 5m
+    timeSpent: 10s
+`)
+
+    const canvasTemplate = pomodoroTimerEditor.getYAMLTemplate()
+
+    expect(canvasTemplate).eq(`- pomodoro:
+    taskName: calendar
+    timer: 25m
+    timeSpent: 1500s
+- pause:
+    timer: 5m
+    timeSpent: 10s
+`)
+  })
 })
