@@ -68,4 +68,45 @@ describe('PomodoroTimerEditor', () => {
       },
     ])
   })
+
+  it('produce template with the first moment one second in the future', () => {
+    const pomodoroTimerEditor = new PomodoroTimerEditor()
+
+    pomodoroTimerEditor.setAndValidateEditorTemplate(`
+- pomodoro:
+    taskName: calendar
+    timer: 25m
+- pause:
+    timer: 5m
+    timeSpent: 10s
+`)
+
+    const canvasTemplate = pomodoroTimerEditor.updateTemplateToTheNextSecond()
+
+    expect(canvasTemplate).deep.eq([
+      { pomodoro: { taskName: 'calendar', timer: '25m', timeSpent: '1s' } },
+      { pause: { timer: '5m', timeSpent: '10s' } },
+    ])
+  })
+
+  it('produce template with the successive moment one second in the future if the previous is completed', () => {
+    const pomodoroTimerEditor = new PomodoroTimerEditor()
+
+    pomodoroTimerEditor.setAndValidateEditorTemplate(`
+- pomodoro:
+    taskName: calendar
+    timer: 25m
+    timeSpent: 1500s 
+- pause:
+    timer: 5m
+    timeSpent: 10s
+`)
+
+    const canvasTemplate = pomodoroTimerEditor.updateTemplateToTheNextSecond()
+
+    expect(canvasTemplate).deep.eq([
+      { pomodoro: { taskName: 'calendar', timer: '25m', timeSpent: '1500s' } },
+      { pause: { timer: '5m', timeSpent: '11s' } },
+    ])
+  })
 })

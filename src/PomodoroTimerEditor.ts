@@ -22,7 +22,7 @@ export type PomodoroTimerEditorError = {
 export default class PomodoroTimerEditor {
   constructor(private validator: PomodoroTimerEditorValidator = new PomodoroTimerEditorValidator()) {}
 
-  private template: PomodoroTimerEditorTemplate[] = []
+  private editorTemplates: PomodoroTimerEditorTemplate[] = []
 
   setAndValidateEditorTemplate(template: string): Result<PomodoroTimerEditorTemplate[], PomodoroTimerEditorError> {
     const validation = this.validator.validate(template)
@@ -31,7 +31,7 @@ export default class PomodoroTimerEditor {
     }
     try {
       const templateParsed = YAML.parse(template)
-      this.template = templateParsed
+      this.editorTemplates = templateParsed
     } catch (error: any) {
       if (error.name === 'YAMLParseError') {
         return Err({ code: error.code, pos: error.pos, linePos: error.linePos })
@@ -39,13 +39,20 @@ export default class PomodoroTimerEditor {
       console.error('unhandled error: ' + JSON.stringify(error))
       throw error
     }
-    return Ok(this.template)
+    return Ok(this.editorTemplates)
+  }
+
+  private timeStringToSeconds(time: string, type: 's' | 'm'): number {
+    const timeWithoutSymbol = parseInt(time.substring(0, time.length - 1))
+    if (type === 's') {
+      return timeWithoutSymbol
+    } else {
+      return timeWithoutSymbol * 60
+    }
   }
 
   private formatTimeCountdown(timerInMinute: string, secondsSpent: string): string {
-    timerInMinute.slice(0, -1)
-    secondsSpent.slice(0, -1)
-    const SecondRemaining = parseInt(timerInMinute) * 60 - parseInt(secondsSpent)
+    const SecondRemaining = this.timeStringToSeconds(timerInMinute, 'm') - this.timeStringToSeconds(secondsSpent, 's')
     const minutes = Math.floor(SecondRemaining / 60)
       .toString()
       .padStart(2, '0')
@@ -55,7 +62,7 @@ export default class PomodoroTimerEditor {
 
   produceCanvasTemplate(): PomodoroTimerCanvasElementTemplate[] {
     const canvasTemplates: PomodoroTimerCanvasElementTemplate[] = []
-    this.template.forEach((editorTemplate) => {
+    this.editorTemplates.forEach((editorTemplate) => {
       if (editorTemplate.pomodoro) {
         canvasTemplates.push({
           pomodoro: {
@@ -76,5 +83,25 @@ export default class PomodoroTimerEditor {
       }
     })
     return canvasTemplates
+  }
+
+  updateTemplateToTheNextSecond(): PomodoroTimerEditorTemplate[] {
+    for (const template of this.editorTemplates) {
+      const moment = template.pomodoro ? template.pomodoro : template.pause
+      const timeSpent = moment.timeSpent
+      const timer = moment.timer
+      if (!timeSpent) {
+        moment.timeSpent = '1s'
+        return this.editorTemplates
+      }
+
+      const secondsSpent = this.timeStringToSeconds(timeSpent, 's')
+      const timerSeconds = this.timeStringToSeconds(timer, 'm')
+      if (timerSeconds !== secondsSpent && timerSeconds > secondsSpent) {
+        moment.timeSpent = `${secondsSpent + 1}s`
+        return this.editorTemplates
+      }
+    }
+    return this.editorTemplates
   }
 }

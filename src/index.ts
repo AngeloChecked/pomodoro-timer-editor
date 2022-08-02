@@ -17,9 +17,10 @@ function updatePomodoroCanvas(canvasTemplates: PomodoroTimerCanvasElementTemplat
   })
 }
 const monacoEditor = configureAndCreateEditor(document.getElementById('editor') as HTMLElement)
-const pomodoroTimerEditor = new PomodoroTimerEditor()
+const editorModel = monacoEditor.getModel()
 
-const editorTemplate = monacoEditor.getModel()?.getValue()
+const pomodoroTimerEditor = new PomodoroTimerEditor()
+const editorTemplate = editorModel?.getValue()
 if (editorTemplate) {
   const result = pomodoroTimerEditor.setAndValidateEditorTemplate(editorTemplate)
   if (result.isOk()) {
@@ -27,7 +28,6 @@ if (editorTemplate) {
   }
 }
 
-const editorModel = monacoEditor.getModel()
 editorModel?.onDidChangeContent(() => {
   const value = editorModel.getValue()
   const result = pomodoroTimerEditor.setAndValidateEditorTemplate(value)
@@ -39,3 +39,7 @@ editorModel?.onDidChangeContent(() => {
     updatePomodoroCanvas(canvasTemplates)
   }
 })
+
+// setInterval(() => {
+//   editorModel?.setValue()
+// }, 1000)
