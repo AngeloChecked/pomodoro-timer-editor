@@ -3,10 +3,11 @@ import { Result, Ok, Err } from 'oxide.ts'
 import PomodoroTimerEditorValidator from './PomodoroTimerEditorValidator'
 
 type Moment = 'pomodoro' | 'pause'
-type PomodoroTimerEditorTemplate = {
+
+export type PomodoroTimerEditorTemplate = {
   [key in Moment]: {
-    taskName: string
-    time: string
+    taskName?: string
+    timer: string
     timeSpent?: string
   }
 }
