@@ -1,18 +1,20 @@
 import { expect } from 'chai'
-import createPomodoroTimerElements, { PomodoroTimerMomentElementTemplate } from '../src/createPomodoroTimerElements'
+import createPomodoroTimerCanvasElements, {
+  PomodoroTimerCanvasElementTemplate,
+} from '../src/createPomodoroTimerCanvasElements'
 import { JSDOM } from 'jsdom'
-describe('createPomodoroTimerElements', () => {
+describe('createPomodoroTimerCanvasElements', () => {
   it('should created elements from template', () => {
-    const templates: PomodoroTimerMomentElementTemplate[] = [
+    const templates: PomodoroTimerCanvasElementTemplate[] = [
       {
         pomodoro: {
-          timer: '25:00',
+          timeToShow: '25:00',
           taskName: 'task name',
         },
       },
       {
         pause: {
-          timer: '5:00',
+          timeToShow: '5:00',
         },
       },
     ]
@@ -21,7 +23,7 @@ describe('createPomodoroTimerElements', () => {
     })
     const domDocument = dom.window.document
 
-    const pomodoroElements = createPomodoroTimerElements(domDocument, templates)
+    const pomodoroElements = createPomodoroTimerCanvasElements(domDocument, templates)
 
     expect(pomodoroElements).lengthOf(3)
     expect(pomodoroElements[0].querySelector('[class=pomodoro-task-name]')?.innerHTML).eq('task name')

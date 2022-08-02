@@ -5,27 +5,26 @@ describe('PomodoroTimerEditor', () => {
   it('set correctly a valid pomodoro timer template', () => {
     const pomodoroTimerEditor = new PomodoroTimerEditor()
 
-    const templateResult = pomodoroTimerEditor.setTemplate(`
+    const templateResult = pomodoroTimerEditor.setAndValidateEditorTemplate(`
 - pomodoro:
     taskName: calendar
-    time: 25m
+    timer: 25m
 - pause:
-    taskName: small break 
-    time: 5m
+    timer: 5m
     timeSpent: 10s
 `)
 
     expect(templateResult.isOk()).equal(true)
     expect(templateResult.unwrap()).deep.eq([
-      { pomodoro: { taskName: 'calendar', time: '25m' } },
-      { pause: { taskName: 'small break', time: '5m', timeSpent: '10s' } },
+      { pomodoro: { taskName: 'calendar', timer: '25m' } },
+      { pause: { timer: '5m', timeSpent: '10s' } },
     ])
   })
 
   it('set an pomodoro timer template with invalid indentation', () => {
     const pomodoroTimerEditor = new PomodoroTimerEditor()
 
-    const templateResult = pomodoroTimerEditor.setTemplate(`
+    const templateResult = pomodoroTimerEditor.setAndValidateEditorTemplate(`
 - pomodoro:
 	taskName: calendar
     `)
@@ -39,5 +38,34 @@ describe('PomodoroTimerEditor', () => {
         { line: 3, col: 2 },
       ],
     })
+  })
+
+  it('from editor template produce relative canvas template', () => {
+    const pomodoroTimerEditor = new PomodoroTimerEditor()
+
+    pomodoroTimerEditor.setAndValidateEditorTemplate(`
+- pomodoro:
+    taskName: calendar
+    timer: 25m
+- pause:
+    timer: 5m
+    timeSpent: 10s
+`)
+
+    const canvasTemplate = pomodoroTimerEditor.produceCanvasTemplate()
+
+    expect(canvasTemplate).deep.eq([
+      {
+        pomodoro: {
+          taskName: 'calendar',
+          timeToShow: '25:00',
+        },
+      },
+      {
+        pause: {
+          timeToShow: '04:50',
+        },
+      },
+    ])
   })
 })

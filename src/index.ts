@@ -1,31 +1,41 @@
 import createCssEditor from './createCssEditor'
 import configureAndCreateEditor from './configureAndCreateEditor'
-import createPomodoroTimerElements, { PomodoroTimerMomentElementTemplate } from './createPomodoroTimerElements'
+import createPomodoroTimerCanvasElements, {
+  PomodoroTimerCanvasElementTemplate,
+} from './createPomodoroTimerCanvasElements'
+import PomodoroTimerEditor from './PomodoroTimerEditor'
 
 const dynamicStyle = document.getElementById('dynamic-style') as HTMLElement
 const pomodoroCssEditor = document.getElementById('pomodoro-css') as HTMLElement
 createCssEditor(pomodoroCssEditor, dynamicStyle)
 
 const pomodoroCanvas = document.getElementById('pomodoro-canvas') as HTMLElement
-const templates: PomodoroTimerMomentElementTemplate[] = [
-  {
-    pomodoro: {
-      timer: '25:00',
-      taskName: 'task name',
-    },
-  },
-  {
-    pause: {
-      timer: '5:00',
-    },
-  },
-]
-createPomodoroTimerElements(document, templates).forEach((element) => {
-  pomodoroCanvas.appendChild(element)
-})
-
+function updatePomodoroCanvas(canvasTemplates: PomodoroTimerCanvasElementTemplate[]): void {
+  pomodoroCanvas.innerHTML = ''
+  createPomodoroTimerCanvasElements(document, canvasTemplates).forEach((element) => {
+    pomodoroCanvas.appendChild(element)
+  })
+}
 const monacoEditor = configureAndCreateEditor(document.getElementById('editor') as HTMLElement)
+const pomodoroTimerEditor = new PomodoroTimerEditor()
+
+const editorTemplate = monacoEditor.getModel()?.getValue()
+if (editorTemplate) {
+  const result = pomodoroTimerEditor.setAndValidateEditorTemplate(editorTemplate)
+  if (result.isOk()) {
+    updatePomodoroCanvas(pomodoroTimerEditor.produceCanvasTemplate())
+  }
+}
+
 const editorModel = monacoEditor.getModel()
 editorModel?.onDidChangeContent(() => {
-  // const _value = editorModel.getValue()
+  const value = editorModel.getValue()
+  const result = pomodoroTimerEditor.setAndValidateEditorTemplate(value)
+  if (result.isErr()) {
+    console.log(result.unwrapErr())
+  }
+  if (result.isOk()) {
+    const canvasTemplates = pomodoroTimerEditor.produceCanvasTemplate()
+    updatePomodoroCanvas(canvasTemplates)
+  }
 })

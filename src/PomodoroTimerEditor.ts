@@ -1,6 +1,7 @@
 import * as YAML from 'yaml'
 import { Result, Ok, Err } from 'oxide.ts'
 import PomodoroTimerEditorValidator from './PomodoroTimerEditorValidator'
+import { PomodoroTimerCanvasElementTemplate } from './createPomodoroTimerCanvasElements'
 
 type Moment = 'pomodoro' | 'pause'
 
@@ -23,7 +24,7 @@ export default class PomodoroTimerEditor {
 
   private template: PomodoroTimerEditorTemplate[] = []
 
-  setTemplate(template: string): Result<PomodoroTimerEditorTemplate[], PomodoroTimerEditorError> {
+  setAndValidateEditorTemplate(template: string): Result<PomodoroTimerEditorTemplate[], PomodoroTimerEditorError> {
     const validation = this.validator.validate(template)
     if (validation.isErr()) {
       return Err(validation.unwrapErr())
@@ -39,5 +40,41 @@ export default class PomodoroTimerEditor {
       throw error
     }
     return Ok(this.template)
+  }
+
+  private formatTimeCountdown(timerInMinute: string, secondsSpent: string): string {
+    timerInMinute.slice(0, -1)
+    secondsSpent.slice(0, -1)
+    const SecondRemaining = parseInt(timerInMinute) * 60 - parseInt(secondsSpent)
+    const minutes = Math.floor(SecondRemaining / 60)
+      .toString()
+      .padStart(2, '0')
+    const seconds = (SecondRemaining % 60).toString().padStart(2, '0')
+    return `${minutes}:${seconds}`
+  }
+
+  produceCanvasTemplate(): PomodoroTimerCanvasElementTemplate[] {
+    const canvasTemplates: PomodoroTimerCanvasElementTemplate[] = []
+    this.template.forEach((editorTemplate) => {
+      if (editorTemplate.pomodoro) {
+        canvasTemplates.push({
+          pomodoro: {
+            timeToShow: this.formatTimeCountdown(
+              editorTemplate.pomodoro.timer,
+              editorTemplate.pomodoro.timeSpent ?? '0s'
+            ),
+            taskName: editorTemplate.pomodoro.taskName,
+          },
+        })
+      }
+      if (editorTemplate.pause) {
+        canvasTemplates.push({
+          pause: {
+            timeToShow: this.formatTimeCountdown(editorTemplate.pause.timer, editorTemplate.pause.timeSpent ?? '0s'),
+          },
+        })
+      }
+    })
+    return canvasTemplates
   }
 }
