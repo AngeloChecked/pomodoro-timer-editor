@@ -4,6 +4,8 @@
 
 An editor to create your pomodoro timer todo declaratively!
 
+[Enter to pomodore editor here](https://angelochecked.github.io/pomodoro-timer-editor/)
+
 # About
 
 Create your pomodoro timer todo
