@@ -1,0 +1,83 @@
+<!doctype html><html><head><meta charset="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Pomodoro Editor</title><meta name="viewport" content="width=device-width,initial-scale=1"/><link rel="icon" href="img/pomodoro-editor-mini-icon.png"/><script defer="defer" src="entry.bundle.js"></script></head><style>html {
+      background: #f6a6a6;
+    }
+
+    .container {
+      display: flex;
+    }
+
+    .bar {
+      background: rgb(13, 13, 13);
+      height: 100px;
+      border-radius: 10px;
+      margin: 10px;
+      margin-bottom: 20px;
+      padding: 10px;
+    }
+
+    #play-button:hover {
+      box-shadow: 5px 10px #888888;
+      height: 80%;
+    }
+
+    #pomodoro-canvas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      resize: both;
+      overflow: auto;
+    }</style><style id="dynamic-style">#pomodoro-canvas {
+      background-color: white;
+      zoom: 100%;
+    }
+
+    .pomodoro {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    .pomodoro-icon {
+      background-image: url(img/pomodoro-timer.svg);
+      background-position: center;
+      background-size: cover;
+      height: 70px;
+      width: 70px;
+      margin-right: 15px;
+    }
+
+    .pomodoro-task-name {
+      font-size: 25px;
+    }
+    .pomodoro-timer {
+      font-size: 25px;
+    }
+
+    .moment-separator {
+      background-image: url(img/arrow.svg);
+      background-position: center;
+      background-size: cover;
+      height: 30px;
+      width: 30px;
+    }
+
+    .pause {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    .pause-icon {
+      background-image: url(img/pause-icon.svg);
+      background-position: center;
+      background-size: cover;
+      height: 40px;
+      width: 40px;
+      margin-right: 10px;
+    }
+    .pause-timer {
+      font-size: 20px;
+    }</style><body><div class="container bar"><div style="width: 20%"><img src="img/pomodoro-editor-icon.svg" height="90%"/></div><div style="width: 20%; text-align: right"><img style="cursor: pointer" src="img/play-button.svg" height="90%" id="play-button"/></div><div style="width: 60%; text-align: right"><p style="margin: 10px;
+            font-weight: bold;
+            font-size: 30px;
+            color: rgb(146, 0, 0);
+            font-family: 'Century Gothic', Verdana, sans-serif;">Pomodoro Editor</p><a href="https://github.com/AngeloChecked/pomodoro-timer-editor"><img style="margin: auto 10px auto 10px" src="img/red-github-icon.svg" height="32px"/></a></div></div><div class="container"><div style="height: 800px; width: 30%; background-color: #ffebeb" id="editor"></div><div style="flex: 2 1 auto; display: flex; flex-direction: column; height: 800px; margin: 0px 0px 0px 10px"><div style="text-align: right; margin-bottom: 5px"><button style="width: 50px; height: 30px" id="css-editor-button">style</button></div><div style="height: 750px" id="pomodoro-canvas"></div></div><div style="flex: 2 1 auto; height: 800px; background-color: #ffebeb; margin-left: 10px" id="pomodoro-css-box"><div style="height: 800px; width: 100%" id="pomodoro-css"></div></div></div></body></html>
