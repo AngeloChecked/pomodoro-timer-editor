@@ -118,7 +118,7 @@ export default function configureAndCreateEditor(htmlElement: HTMLElement): mona
     timer: 25m
     timeSpent: 0s
 - pause:
-    timer: 25m
+    timer: 5m
     timeSpent: 0s
 `,
     fontSize: 20,
