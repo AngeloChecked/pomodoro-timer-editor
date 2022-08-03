@@ -26,6 +26,11 @@
       padding: 10px;
     }
 
+    #play-button:hover {
+      box-shadow: 5px 10px #888888;
+      height: 80%;
+    }
+
     #pomodoro-canvas {
       display: flex;
       align-items: center;
@@ -39,6 +44,7 @@
   <style id="dynamic-style">
     #pomodoro-canvas {
       background-color: white;
+      zoom: 100%;
     }
 
     .pomodoro {
@@ -94,7 +100,7 @@
         <img src="img/pomodoro-editor-icon.svg" height="90%" />
       </div>
       <div style="width: 20%; text-align: right">
-        <img style="cursor: pointer" src="img/play-button.svg" height="90%" id="play-button" />
+        <img style="cursor: pointer" src="img/play-button.svg" height="90%" id="play-button"/>
       </div>
       <div style="width: 60%; text-align: right">
         <p
@@ -113,9 +119,14 @@
     </div>
     <div class="container">
       <div style="height: 800px; width: 30%; background-color: #ffebeb" id="editor"></div>
-      <div class="container" style="height: 600px; width: 70%">
-        <div style="height: 800px; width: 50%; margin: auto 10px auto 10px" id="pomodoro-canvas"></div>
-        <div style="height: 800px; width: 50%; background-color: #ffebeb" id="pomodoro-css"></div>
+      <div style="flex: 2 1 auto; display:flex; flex-direction: column; height: 800px; margin: 0px 0px 0px 10px">
+        <div style="text-align: right; margin-bottom:5px;">
+          <button style="width: 50px; height: 30px" id="css-editor-button">style</button>
+        </div>
+        <div style="height: 750px; " id="pomodoro-canvas"></div>
+      </div>
+      <div style="flex: 2 1 auto; height: 800px; background-color: #ffebeb; margin-left: 10px" id="pomodoro-css-box">
+        <div style="height: 800px; width: 100%" id="pomodoro-css"></div>
       </div>
     </div>
   </body>

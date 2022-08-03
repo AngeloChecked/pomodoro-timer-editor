@@ -47,7 +47,7 @@ const playButton = document.getElementById('play-button') as HTMLImageElement
 let timerLoop: NodeJS.Timeout
 
 playButton.onclick = () => {
-  if (play) {
+  if (!play) {
     monacoEditor.updateOptions({ readOnly: true, hideCursorInOverviewRuler: true })
     playButton.src = 'img/stop-button.svg'
     timerLoop = setInterval(() => {
@@ -56,10 +56,22 @@ playButton.onclick = () => {
       editorModel?.setValue(editorTemplateOneSecondNext)
     }, 1000)
   } else {
-    const x = monacoEditorBox.querySelector('.cursors-layer.cursor') as HTMLElement
     monacoEditor.updateOptions({ readOnly: false, hideCursorInOverviewRuler: false })
     playButton.src = 'img/play-button.svg'
     clearInterval(timerLoop)
   }
   play = !play
+}
+
+let cssEditorOpen = false
+const cssEditorButton = document.getElementById('css-editor-button') as HTMLElement
+const pomodoroCssEditorBox = document.getElementById('pomodoro-css-box') as HTMLElement
+pomodoroCssEditorBox.style.display = 'none'
+cssEditorButton.onclick = () => {
+  if (cssEditorOpen) {
+    pomodoroCssEditorBox.style.display = 'none'
+  } else {
+    pomodoroCssEditorBox.style.display = 'flex'
+  }
+  cssEditorOpen = !cssEditorOpen
 }

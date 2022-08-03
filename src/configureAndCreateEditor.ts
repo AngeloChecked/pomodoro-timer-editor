@@ -114,7 +114,7 @@ export default function configureAndCreateEditor(htmlElement: HTMLElement): mona
 
   const monacoEditor = monaco.editor.create(htmlElement, {
     value: `- pomodoro:
-    taskName: calendar
+    taskName: Read emails
     timer: 25m
     timeSpent: 0s
 - pause:
