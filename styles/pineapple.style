@@ -1,0 +1,59 @@
+#pomodoro-canvas {
+  background-color: white;
+  zoom: 100%;
+  background-color: blue;
+}
+
+.pomodoro {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 2px solid #824300;
+  padding: 5px;
+  color: #824300;
+  background-color: #fff5bf;
+  border-radius: 15px;
+}
+.pomodoro-icon {
+  background-image: url(https://www.svgrepo.com/show/127038/pineapple.svg);
+  background-position: center;
+  background-size: cover;
+  height: 70px;
+  width: 70px;
+  margin-right: 15px;
+}
+
+.pomodoro-task-name {
+  font-size: 25px;
+}
+.pomodoro-timer {
+  font-size: 25px;
+}
+
+.moment-separator {
+  height: 0px;
+  width: 0px;
+}
+
+.pause {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 2px solid black;
+  padding: 5px;
+  margin: 5px;
+  color: #824300;
+  background-color: #fff5bf;
+  border-radius: 15px;
+}
+.pause-icon {
+  background-image: url(https://www.svgrepo.com/show/186336/timer.svg);
+  background-position: center;
+  background-size: cover;
+  height: 40px;
+  width: 40px;
+  margin-right: 10px;
+}
+.pause-timer {
+  font-size: 20px;
+}

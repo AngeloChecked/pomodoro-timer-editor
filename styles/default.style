@@ -1,0 +1,50 @@
+#pomodoro-canvas {
+  background-color: white;
+  zoom: 100%;
+}
+
+.pomodoro {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.pomodoro-icon {
+  background-image: url(img/pomodoro-timer.svg);
+  background-position: center;
+  background-size: cover;
+  height: 70px;
+  width: 70px;
+  margin-right: 15px;
+}
+
+.pomodoro-task-name {
+  font-size: 25px;
+}
+.pomodoro-timer {
+  font-size: 25px;
+}
+
+.moment-separator {
+  background-image: url(img/arrow.svg);
+  background-position: center;
+  background-size: cover;
+  height: 30px;
+  width: 30px;
+}
+
+.pause {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.pause-icon {
+  background-image: url(img/pause-icon.svg);
+  background-position: center;
+  background-size: cover;
+  height: 40px;
+  width: 40px;
+  margin-right: 10px;
+}
+.pause-timer {
+  font-size: 20px;
+}

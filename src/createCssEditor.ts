@@ -22,3 +22,32 @@ export default function createCssEditor(
   })
   return cssEditor
 }
+
+import defaultCss from '../styles/default.style'
+import bordersCss from '../styles/borders.style'
+import pineappleCss from '../styles/pineapple.style'
+const customCssFiles: [string, string][] = [
+  ['default', defaultCss],
+  ['borders', bordersCss],
+  ['pineapple', pineappleCss],
+]
+
+export function loadCustomCss(
+  editorSelectStyles: HTMLSelectElement,
+  cssEditor: monaco.editor.IStandaloneCodeEditor
+): void {
+  customCssFiles.forEach(([name, cssRaw]) => {
+    editorSelectStyles.appendChild(createOption(name, cssRaw))
+  })
+
+  editorSelectStyles.onchange = () => {
+    cssEditor.setValue(editorSelectStyles.value)
+  }
+
+  function createOption(name: string, content: string): HTMLElement {
+    const option = document.createElement('option')
+    option.value = content
+    option.innerHTML = name
+    return option
+  }
+}

@@ -1,4 +1,4 @@
-import createCssEditor from './createCssEditor'
+import createCssEditor, { loadCustomCss } from './createCssEditor'
 import configureAndCreateEditor from './configureAndCreateEditor'
 import createPomodoroTimerCanvasElements, {
   PomodoroTimerCanvasElementTemplate,
@@ -7,7 +7,9 @@ import PomodoroTimerEditor from './PomodoroTimerEditor'
 
 const dynamicStyle = document.getElementById('dynamic-style') as HTMLElement
 const pomodoroCssEditor = document.getElementById('pomodoro-css') as HTMLElement
-createCssEditor(pomodoroCssEditor, dynamicStyle)
+const cssEditor = createCssEditor(pomodoroCssEditor, dynamicStyle)
+const editorSelectStyles = document.getElementById('editor-select-styles') as HTMLSelectElement
+loadCustomCss(editorSelectStyles, cssEditor)
 
 const pomodoroCanvas = document.getElementById('pomodoro-canvas') as HTMLElement
 function updatePomodoroCanvas(canvasTemplates: PomodoroTimerCanvasElementTemplate[]): void {

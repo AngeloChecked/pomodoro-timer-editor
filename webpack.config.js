@@ -21,6 +21,10 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
+        test: /\.style$/i,
+        use: 'raw-loader',
+      },
+      {
         test: /\.ttf$/,
         use: ['file-loader'],
       },
