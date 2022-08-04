@@ -21,6 +21,11 @@ export namespace module {
     } | {
         test: RegExp;
         use: string;
+        exclude?: undefined;
+        type?: undefined;
+    } | {
+        test: RegExp;
+        use: string;
         exclude: RegExp;
         type?: undefined;
     } | {
