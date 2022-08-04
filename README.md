@@ -26,6 +26,9 @@ I thought of using it for obs studio
 
 <img alt="pomodoro timer editor start" src="docs/podoro-timer-editor-obs.gif" width="550px" height="463px" >
 
+# Styles
+
+Do you want contribute by adding your style? <a href="https://github.com/AngeloChecked/pomodoro-timer-editor/issues" target="_blank">Submit a proposal here.</a>
 
 # Development
 
